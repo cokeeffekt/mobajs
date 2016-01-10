@@ -1,0 +1,24 @@
+{
+  "name": "mobajs",
+  "homepage": "https://github.com/cokeeffekt/mobajs",
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "EaselJS": "easeljs#~0.8.2",
+    "TweenJS": "~0.6.2",
+    "jquery": "~2.2.0",
+    "lodash": "~3.10.1",
+    "PreloadJS": "~0.6.2",
+    "easystarjs": "~0.2.3"
+  }
+}
