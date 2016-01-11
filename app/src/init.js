@@ -4,11 +4,11 @@ var mapG = (function () {
   var xCount = 0;
   var yCount = 0;
   var row = [];
-  while (xCount < 50) {
+  while (xCount < 100) {
     xCount++;
     yCount = 0;
     row = [];
-    while (yCount < 50) {
+    while (yCount < 80) {
       row.push((_.random(1, 4) == 1 ? 1 : 0));
       yCount++;
     }
