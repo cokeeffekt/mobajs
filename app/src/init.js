@@ -22,45 +22,51 @@ var mapG = (function () {
 var tileTypes = {
   0: (function () {
     var t = new createjs.Shape();
-    t.graphics.beginFill('Green').drawRect(0, 0, 25, 25);
+    t.graphics.beginFill('#D8D8D8').drawRect(0, 0, 25, 25);
     return t;
   })(),
   1: (function () {
     var t = new createjs.Shape();
-    t.graphics.beginFill('Black').drawRect(0, 0, 25, 25);
+    t.graphics.beginFill('#E8DEDE').drawRect(0, 0, 25, 25);
     return t;
   })(),
 };
 
-var map = require('src/map');
-//var player = require('src/player');
+var world = require('src/world');
 
 $(function () {
   //set world stage
-  var viewport = new createjs.Stage('world');
-  var mm = new map(mapG, tileTypes, viewport);
+  $fps = $('#fps');
+  var stage = new createjs.Stage('world');
 
-  viewport.addEventListener('stagemousedown', function (evt) {
+  var fps = new createjs.Text(createjs.Ticker.getFPS(), '30px Arial', '#000000');
+  stage.addChild(fps);
 
-    var x = mm.currentX + ((evt.stageX - 12) - 400);
-    x = Math.round(x / 25) * 25;
-    x = Math.min(Math.max(x, 0), mm.maxX);
+  var $world = new world(mapG, tileTypes, stage);
 
-    var y = mm.currentY + ((evt.stageY - 12) - 300);
-    y = Math.round(y / 25) * 25;
-    y = Math.min(Math.max(y, 0), mm.maxY);
-
-    mm.set(x, y, 500);
-  });
-
-  viewport.addChild(mm.view);
-  mm.set(0, 0);
+  //  viewport.addEventListener('stagemousedown', function (evt) {
+  //
+  //    var x = mm.currentX + ((evt.stageX - 12) - 400);
+  //    x = Math.round(x / 25) * 25;
+  //    x = Math.min(Math.max(x, 0), mm.maxX);
+  //
+  //    var y = mm.currentY + ((evt.stageY - 12) - 300);
+  //    y = Math.round(y / 25) * 25;
+  //    y = Math.min(Math.max(y, 0), mm.maxY);
+  //
+  //    mm.set(x, y, 500);
+  //  });
+  //
+  //  viewport.addChild(mm.view);
+  //  mm.set(0, 0);
 
   function handleTick() {
-    viewport.update();
+
+    $fps.text(createjs.Ticker.getMeasuredFPS() || 0);
+    stage.update();
   }
 
   createjs.Ticker.setFPS(30);
-  createjs.Ticker.addEventListener('tick', viewport);
+  createjs.Ticker.addEventListener('tick', handleTick);
 
 });

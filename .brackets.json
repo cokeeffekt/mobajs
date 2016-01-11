@@ -1,6 +1,7 @@
 {
     "jscodehints.detectedExclusions": [
         "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/var/rtagName.js",
-        "/Users/patrikhartwig/Gits/mobajs/app/src/init.js"
+        "/Users/patrikhartwig/Gits/mobajs/app/src/init.js",
+        "/Users/patrik.hartwig/Gits/pat/mobajs/app/src/init.js"
     ]
 }
