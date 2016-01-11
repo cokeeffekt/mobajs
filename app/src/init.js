@@ -1,3 +1,4 @@
+// map gen
 var mapG = (function () {
   var map = [];
   var xCount = 0;
@@ -17,7 +18,6 @@ var mapG = (function () {
   return map;
 })();
 
-var map = require('src/map');
 
 var tileTypes = {
   0: (function () {
@@ -32,81 +32,35 @@ var tileTypes = {
   })(),
 };
 
+var map = require('src/map');
+//var player = require('src/player');
+
 $(function () {
   //set world stage
   var viewport = new createjs.Stage('world');
   var mm = new map(mapG, tileTypes, viewport);
 
-  var player = (function () {
-    var entity = new createjs.Container();
-
-    var circle = new createjs.Shape();
-    circle.graphics.beginFill('DeepSkyBlue').drawRect(0, 0, 25, 25);
-    var circlee = new createjs.Shape();
-    circlee.graphics.beginFill('red').drawCircle(12.5, 12.5, 5);
-
-    entity.addChild(circle);
-    entity.addChild(circlee);
-    entity.x = 400;
-    entity.y = 300;
-
-    entity.worldX = 0;
-    entity.worldY = 0;
-    return entity;
-  })();
-
-  console.log(player);
-
-
-  player.addEventListener('click', function (evt) {
-    console.log(evt);
-  });
-
   viewport.addEventListener('stagemousedown', function (evt) {
 
-    var current = {
-      x: player.worldX,
-      y: player.worldY,
-    };
-    var x = player.worldX + ((evt.stageX - 12) - 400);
+    var x = mm.currentX + ((evt.stageX - 12) - 400);
     x = Math.round(x / 25) * 25;
+    x = Math.min(Math.max(x, 0), mm.maxX);
 
-    var y = player.worldY + ((evt.stageY - 12) - 300);
+    var y = mm.currentY + ((evt.stageY - 12) - 300);
     y = Math.round(y / 25) * 25;
+    y = Math.min(Math.max(y, 0), mm.maxY);
 
-    mm.path(current, {
-      x: Math.min(Math.max(x, 0), mm.maxX),
-      y: Math.min(Math.max(y, 0), mm.maxY)
-    }, function (path) {
-      console.log(path);
-
-      _.forEach(path, function (p, i) {
-        setTimeout(function () {
-          mm.set(p.x, p.y);
-          player.worldX = p.x;
-          player.worldY = p.y;
-        }, i * 100);
-      });
-
-    });
-
-    //    mm.set(player.worldX, player.worldY);
-
-    console.log('Player Pos:', player.worldX, player.worldY);
+    mm.set(x, y, 500);
   });
 
-
   viewport.addChild(mm.view);
-  viewport.addChild(player);
-  mm.set(player.worldX, player.worldY);
-
+  mm.set(0, 0);
 
   function handleTick() {
-    viewport.addChild(player);
     viewport.update();
   }
 
   createjs.Ticker.setFPS(30);
-  //  createjs.Ticker.addEventListener('tick', handleTick);
+  createjs.Ticker.addEventListener('tick', viewport);
 
 });

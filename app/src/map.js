@@ -9,6 +9,8 @@ function map(mapG, tileTypes, stage) {
 
   var mapC = [];
 
+  this.currentX = 0;
+  this.currentY = 0;
   this.maxY = (mapG.length - 1) * 25;
   this.maxX = (mapG[0].length - 1) * 25;
 
@@ -29,21 +31,24 @@ function map(mapG, tileTypes, stage) {
 
   var plate = new createjs.Shape();
   plate.graphics.beginFill('Purple').drawRect(0, 0, this.maxY + 25, this.maxX + 25);
-
+  self.view.addChild(plate);
   var current = {
     x: 0,
     y: 0
   };
 
 
-  this.set = function (x, y) {
+  this.set = function (x, y, time) {
 
-    self.view.removeAllChildren();
-    self.view.addChild(plate);
+    self.currentX = x;
+    self.currentY = y;
+    //    self.view.removeAllChildren();
+    //    self.view.addChild(plate);
 
     var reduce = _.filter(mapC, function (i) {
       if (i.cX < (x + 400) && i.cY < (y + 300) && i.cX > (x - 400) && i.cY > (y - 300))
         return true;
+      self.view.removeChild(i.title);
       return false;
     });
     //    var reduce = mapC;
@@ -54,40 +59,14 @@ function map(mapG, tileTypes, stage) {
       tile.tile.y = tile.cY;
     });
 
-    self.view.x = Math.round(400 - x);
-    self.view.y = Math.round(300 - y);
-    stage.update();
-  };
+    createjs.Tween.get(self.view).to({
+      x: Math.round(400 - x),
+      y: Math.round(300 - y)
+    }, time);
 
-  // path finding
-  var easystar = new EasyStar.js();
-  easystar.setGrid(mapG);
-  easystar.setAcceptableTiles([0]);
-  easystar.enableDiagonals();
-
-  this.path = function (from, too, cb) {
-
-    from.x = Math.round(from.x / 25);
-    from.y = Math.round(from.y / 25);
-
-    too.x = Math.round(too.x / 25);
-    too.y = Math.round(too.y / 25);
-
-    console.log(from, too);
-
-    easystar.findPath(from.x, from.y, too.x, too.y, function (path) {
-      if (path === null) {
-        console.log('Path was not found.');
-      } else {
-        path.map(function (t) {
-          t.x = t.x * 25;
-          t.y = t.y * 25;
-        });
-        if (typeof cb == 'function')
-          cb(path);
-      }
-    });
-    easystar.calculate();
+    //    self.view.x = Math.round(400 - x);
+    //    self.view.y = Math.round(300 - y);
+    //    stage.update();
   };
 
 }
