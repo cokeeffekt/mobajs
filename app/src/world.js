@@ -1,4 +1,4 @@
-var player = require('src/player');
+var players = require('src/player');
 
 function worldWrap(mapG, tileTypes, stage) {
   var self = this;
@@ -7,38 +7,36 @@ function worldWrap(mapG, tileTypes, stage) {
   this.world = world;
   this.players = [];
 
+  this.tileX = 32;
+  this.tileY = 32;
+
   world.layer1 = new createjs.Container();
   world.layer2 = new createjs.Container();
   world.addChild(world.layer1);
   world.addChild(world.layer2);
 
-  this.config = {
-    tileX: 32,
-    tileY: 32,
-  };
-
   world.snapToPixel = true;
   stage.addChild(world);
 
+  // for caching world offset
   var offset = new createjs.Point();
-  world.centerX = (stage.canvas.width / 2);
-  world.centerY = (stage.canvas.height / 2);
-
 
   var worldUpEvent = false;
   world.on('mousedown', function (evt) {
-    offset.x = Math.round(evt.stageX - world.x);
-    offset.y = Math.round(evt.stageY - world.y);
+    offset.x = evt.stageX - world.x;
+    offset.y = evt.stageY - world.y;
+
     worldUpEvent = world.on('pressup', function (evt) {
-      console.log(evt);
+      console.log(offset);
+      console.log(evt.target.name);
+
+      players.goto(offset.x - (self.tileX / 2), offset.y - (self.tileY / 2));
     }, null, true);
   });
 
   world.on('pressmove', function (evt) {
     world.off('pressup', worldUpEvent);
-    var x = Math.abs(Math.max(Math.min((evt.stageX - offset.x), 0), -Math.abs(offset.maxX - stage.canvas.width))) + (stage.canvas.width / 2);
-    var y = Math.abs(Math.max(Math.min((evt.stageY - offset.y), 0), -Math.abs(offset.maxY - stage.canvas.height))) + (stage.canvas.height / 2);
-    self.set(x, y);
+    self.setView((evt.stageX - offset.x) + (stage.canvas.width / 2), (evt.stageY - offset.y) + (stage.canvas.height / 2));
   });
 
 
@@ -55,24 +53,23 @@ function worldWrap(mapG, tileTypes, stage) {
 
   var mapC = [];
 
-  offset.maxY = (mapG.length - 1) * self.config.tileX;
-  offset.maxX = (mapG[0].length - 1) * self.config.tileY;
+  this.maxX = (mapG[0].length) * this.tileY;
+  this.maxY = (mapG.length) * this.tileX;
 
   mapG.map(function (row, rowI) {
     row.map(function (col, colI) {
-      //      if (col === 0)
       mapC.push({
         x: colI,
         y: rowI,
-        cX: colI * self.config.tileX,
-        cY: rowI * self.config.tileY,
+        cX: colI * self.tileX,
+        cY: rowI * self.tileY,
         tile: tileTypes[col].clone()
       });
     });
   });
   //
   var plate = new createjs.Shape();
-  plate.graphics.beginFill('Purple').drawRect(0, 0, offset.maxX + this.config.tileX, offset.maxY + this.config.tileY);
+  plate.graphics.beginFill('Purple').drawRect(0, 0, this.maxX + this.tileX, this.maxY + this.tileY);
 
   plate.set({
     alpha: 0.5
@@ -87,22 +84,49 @@ function worldWrap(mapG, tileTypes, stage) {
     tile.tile.x = tile.cX;
     tile.tile.y = tile.cY;
   });
-  world.layer1.cache(0, 0, offset.maxX, offset.maxY);
+  world.layer1.cache(0, 0, this.maxX, this.maxY);
 
-  console.log(mapC[0].tile);
 }
 
 worldWrap.prototype.onTick = function (event) {
 
 };
 
-worldWrap.prototype.set = function (x, y) {
+worldWrap.prototype.centerView = function (x, y) {
   var world = this.world;
   var stage = this.stage;
-  world.x = -Math.abs(x - (stage.canvas.width / 2));
-  world.y = -Math.abs(y - (stage.canvas.height / 2));
-  world.centerX = x;
-  world.centerY = y;
+  x = -Math.abs(x) + (stage.canvas.width / 2);
+  y = -Math.abs(y) + (stage.canvas.height / 2);
+
+  x = Math.min(0, x);
+  y = Math.min(0, y);
+
+  x = Math.max(-Math.abs(this.maxX - stage.canvas.width), x);
+  y = Math.max(-Math.abs(this.maxY - stage.canvas.height), y);
+
+  world.x = x;
+  world.y = y;
+};
+
+worldWrap.prototype.setView = function (x, y) {
+  var world = this.world;
+  var stage = this.stage;
+
+  console.log(x, y);
+  x -= (stage.canvas.width / 2);
+  y -= (stage.canvas.height / 2);
+
+  x = Math.min(0, x);
+  y = Math.min(0, y);
+
+  x = Math.max(-Math.abs(this.maxX - stage.canvas.width), x);
+  y = Math.max(-Math.abs(this.maxY - stage.canvas.height), y);
+
+  world.x = x;
+  world.y = y;
+
+  world.centerX = x + (stage.canvas.width / 2);
+  world.centerY = x + (stage.canvas.height / 2);
 };
 
 worldWrap.prototype.moveTo = function (x, y, duration) {
@@ -112,21 +136,18 @@ worldWrap.prototype.moveTo = function (x, y, duration) {
 worldWrap.prototype.addPlayer = function (playerObject, x, y) {
   var world = this.world;
   var stage = this.stage;
-  var players = this.players;
-  var plobj = new player(playerObject, x, y, world, stage);
-
-  players.push(plobj);
+  var plobj = new players.new(playerObject, x, y, this, stage);
 };
 
 worldWrap.prototype.walkPath = function (from, to, cb) {
-  var config = this.config;
+  var self = this;
   this.easystar.findPath(from[0], from[1], to[0], to[1], function (path) {
     if (path === null) {
       console.log('Path was not found.');
     } else {
       path.map(function (t) {
-        t.x = t.x * 25;
-        t.y = t.y * 25;
+        t.x = t.x * self.tileX;
+        t.y = t.y * self.tileY;
       });
       if (typeof cb == 'function')
         cb(path);

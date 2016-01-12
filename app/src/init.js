@@ -48,7 +48,7 @@ $(function () {
   $world.addPlayer(playerObj, 10, 10);
 
   function handleTick(event) {
-    $fps.text(createjs.Ticker.getMeasuredFPS() || 0);
+    $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
     $world.onTick(event);
     stage.update(event);
   }
