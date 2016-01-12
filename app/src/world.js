@@ -1,41 +1,62 @@
-function worldWrap(mapG, tileTypes, stage) {
+var player = require('src/player');
 
+function worldWrap(mapG, tileTypes, stage) {
+  var self = this;
   var world = new createjs.Container();
+  this.stage = stage;
+  this.world = world;
+  this.players = [];
+
+  world.layer1 = new createjs.Container();
+  world.layer2 = new createjs.Container();
+  world.addChild(world.layer1);
+  world.addChild(world.layer2);
+
+  this.config = {
+    tileX: 32,
+    tileY: 32,
+  };
+
   world.snapToPixel = true;
   stage.addChild(world);
 
-  //  var viewDrag = new createjs.Shape(new createjs.Graphics().beginFill('Purple').drawRect(0, 0, stage.canvas.width, stage.canvas.height)).set({
-  //    alpha: 0
-  //  });
-  //
-  //  stage.addChild(viewDrag);
   var offset = new createjs.Point();
   world.centerX = (stage.canvas.width / 2);
   world.centerY = (stage.canvas.height / 2);
 
+
+  var worldUpEvent = false;
   world.on('mousedown', function (evt) {
-    offset.x = evt.stageX - world.x;
-    offset.y = evt.stageY - world.y;
-    console.log('down');
+    offset.x = Math.round(evt.stageX - world.x);
+    offset.y = Math.round(evt.stageY - world.y);
+    worldUpEvent = world.on('pressup', function (evt) {
+      console.log(evt);
+    }, null, true);
   });
+
   world.on('pressmove', function (evt) {
-    var x = evt.stageX - offset.x;
-    var y = evt.stageY - offset.y;
-    world.x = Math.max(Math.min(x, 0), -Math.abs(offset.maxX - stage.canvas.width));
-    world.y = Math.max(Math.min(y, 0), -Math.abs(offset.maxY - stage.canvas.height));
-    world.centerX = Math.abs(world.x) + (stage.canvas.width / 2);
-    world.centerY = Math.abs(world.y) + (stage.canvas.height / 2);
-    //    cleanUp();
+    world.off('pressup', worldUpEvent);
+    var x = Math.abs(Math.max(Math.min((evt.stageX - offset.x), 0), -Math.abs(offset.maxX - stage.canvas.width))) + (stage.canvas.width / 2);
+    var y = Math.abs(Math.max(Math.min((evt.stageY - offset.y), 0), -Math.abs(offset.maxY - stage.canvas.height))) + (stage.canvas.height / 2);
+    self.set(x, y);
   });
+
 
   mapG[0][0] = 0;
   mapG[0][1] = 0;
   mapG[1][1] = 0;
 
+  // path finding define walkable
+
+  this.easystar = new EasyStar.js();
+  this.easystar.setGrid(mapG);
+  this.easystar.setAcceptableTiles([0]);
+  this.easystar.enableDiagonals();
+
   var mapC = [];
 
-  offset.maxY = (mapG.length - 1) * 25;
-  offset.maxX = (mapG[0].length - 1) * 25;
+  offset.maxY = (mapG.length - 1) * self.config.tileX;
+  offset.maxX = (mapG[0].length - 1) * self.config.tileY;
 
   mapG.map(function (row, rowI) {
     row.map(function (col, colI) {
@@ -43,66 +64,75 @@ function worldWrap(mapG, tileTypes, stage) {
       mapC.push({
         x: colI,
         y: rowI,
-        cX: colI * 25,
-        cY: rowI * 25,
+        cX: colI * self.config.tileX,
+        cY: rowI * self.config.tileY,
         tile: tileTypes[col].clone()
       });
     });
   });
   //
   var plate = new createjs.Shape();
-  plate.graphics.beginFill('Purple').drawRect(0, 0, offset.maxX + 25, offset.maxY + 25);
-  world.addChild(plate);
-  var current = {
-    x: 0,
-    y: 0
-  };
+  plate.graphics.beginFill('Purple').drawRect(0, 0, offset.maxX + this.config.tileX, offset.maxY + this.config.tileY);
+
+  plate.set({
+    alpha: 0.5
+  });
+
+  world.layer1.addChild(plate);
 
 
-  function cleanUp() {
-    mapC.map(function (tile) {
+  mapC.map(function (tile) {
+    world.layer1.addChild(tile.tile);
+    tile.tile.name = 'map_' + tile.x + '_' + tile.y;
+    tile.tile.x = tile.cX;
+    tile.tile.y = tile.cY;
+  });
+  world.layer1.cache(0, 0, offset.maxX, offset.maxY);
 
-      world.addChild(tile.tile);
-      tile.tile.x = tile.cX;
-      tile.tile.y = tile.cY;
-      //      if (tile.cX < (world.centerX + 200) && tile.cY < (world.centerY + 200) && tile.cX > (world.centerX - 200) && tile.cY > (world.centerY - 200)) {
-      //        tile.child = world.addChild(tile.tile);
-      //        tile.tile.x = tile.cX;
-      //        tile.tile.y = tile.cY;
-      //      } else {
-      //        world.removeChild(tile.child);
-      //      }
-    });
-    //    console.log(world.children[0]);
-    world.cache(0, 0, offset.maxX, offset.maxY);
-    console.log(world.children.length);
-  }
-
-  cleanUp();
-  //  var reduce = _.filter(mapC, function (i) {
-  //    //    if (i.cX < (offset.x + 400) && i.cY < (offset.y + 300) && i.cX > (offset.x - 400) && i.cY > (offset.y - 300))
-  //    return true;
-  //    //    world.removeChild(i.title);
-  //    //    return false;
-  //  });
-  //  //    var reduce = mapC;
-  //
-  //  reduce.map(function (tile) {
-  //
-  //    world.addChild(tile.tile);
-  //    tile.tile.x = tile.cX;
-  //    tile.tile.y = tile.cY;
-  //  });
-
-  //  createjs.Tween.get(self.view).to({
-  //    x: Math.round(400 - x),
-  //    y: Math.round(300 - y)
-  //  }, time);
-
-  //    self.view.x = Math.round(400 - x);
-  //    self.view.y = Math.round(300 - y);
-  //    stage.update();
-
+  console.log(mapC[0].tile);
 }
+
+worldWrap.prototype.onTick = function (event) {
+
+};
+
+worldWrap.prototype.set = function (x, y) {
+  var world = this.world;
+  var stage = this.stage;
+  world.x = -Math.abs(x - (stage.canvas.width / 2));
+  world.y = -Math.abs(y - (stage.canvas.height / 2));
+  world.centerX = x;
+  world.centerY = y;
+};
+
+worldWrap.prototype.moveTo = function (x, y, duration) {
+
+};
+
+worldWrap.prototype.addPlayer = function (playerObject, x, y) {
+  var world = this.world;
+  var stage = this.stage;
+  var players = this.players;
+  var plobj = new player(playerObject, x, y, world, stage);
+
+  players.push(plobj);
+};
+
+worldWrap.prototype.walkPath = function (from, to, cb) {
+  var config = this.config;
+  this.easystar.findPath(from[0], from[1], to[0], to[1], function (path) {
+    if (path === null) {
+      console.log('Path was not found.');
+    } else {
+      path.map(function (t) {
+        t.x = t.x * 25;
+        t.y = t.y * 25;
+      });
+      if (typeof cb == 'function')
+        cb(path);
+    }
+  });
+  easystar.calculate();
+};
 
 module.exports = worldWrap;

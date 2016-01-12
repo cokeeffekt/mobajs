@@ -6,6 +6,8 @@ http://opengameart.org/
 
 http://shaneriley.com/demos/canvas/tiled_renderer/
 
+https://github.com/gaurav0/Universal-LPC-Spritesheet-Character-Generator
+
 http://www.mapeditor.org/
 
 Canvas
