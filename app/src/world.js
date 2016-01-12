@@ -1,6 +1,7 @@
 function worldWrap(mapG, tileTypes, stage) {
 
   var world = new createjs.Container();
+  world.snapToPixel = true;
   stage.addChild(world);
 
   //  var viewDrag = new createjs.Shape(new createjs.Graphics().beginFill('Purple').drawRect(0, 0, stage.canvas.width, stage.canvas.height)).set({
@@ -24,7 +25,7 @@ function worldWrap(mapG, tileTypes, stage) {
     world.y = Math.max(Math.min(y, 0), -Math.abs(offset.maxY - stage.canvas.height));
     world.centerX = Math.abs(world.x) + (stage.canvas.width / 2);
     world.centerY = Math.abs(world.y) + (stage.canvas.height / 2);
-    cleanUp();
+    //    cleanUp();
   });
 
   mapG[0][0] = 0;
@@ -60,15 +61,20 @@ function worldWrap(mapG, tileTypes, stage) {
 
   function cleanUp() {
     mapC.map(function (tile) {
-      if (tile.cX < (world.centerX + 200) && tile.cY < (world.centerY + 200) && tile.cX > (world.centerX - 200) && tile.cY > (world.centerY - 200)) {
-        tile.child = world.addChild(tile.tile);
-        tile.tile.x = tile.cX;
-        tile.tile.y = tile.cY;
-      } else {
-        world.removeChild(tile.child);
-      }
+
+      world.addChild(tile.tile);
+      tile.tile.x = tile.cX;
+      tile.tile.y = tile.cY;
+      //      if (tile.cX < (world.centerX + 200) && tile.cY < (world.centerY + 200) && tile.cX > (world.centerX - 200) && tile.cY > (world.centerY - 200)) {
+      //        tile.child = world.addChild(tile.tile);
+      //        tile.tile.x = tile.cX;
+      //        tile.tile.y = tile.cY;
+      //      } else {
+      //        world.removeChild(tile.child);
+      //      }
     });
     //    console.log(world.children[0]);
+    world.cache(0, 0, offset.maxX, offset.maxY);
     console.log(world.children.length);
   }
 
