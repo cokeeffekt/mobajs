@@ -67,10 +67,8 @@ function worldWrap(mapG, stage) {
   mapG.layers[0].mapGrid.map(function (row, tileY) {
     row.map(function (col, tileX) {
       //      console.log(col, tileX, tileY);
-      var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col);
+      var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col - 1);
       tile.paused = true;
-      //      console.log(tile, col);
-      //      ehe.rwre.wer.wer = 12;
       world.layer1.addChild(tile);
       tile.name = 'map_' + tileX + '_' + tileY;
       tile.x = tileX * self.tileX;
