@@ -78,6 +78,7 @@ function buildMap(path) {
       // build out the map grid from the tiled file
       mapFile.layerObj = {};
       _.forEach(mapFile.layers, function (layer) {
+        if (!layer.data) return;
         layer.mapGrid = _.chunk(b642array(layer.data), layer.width);
         mapFile.layerObj[layer.name] = layer;
       });
