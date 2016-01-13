@@ -12,15 +12,14 @@ function worldWrap(mapG, stage) {
   this.maxX = mapG.width * this.tileX;
   this.maxY = mapG.height * this.tileY;
 
-  world.ground = new createjs.Container();
-  world.terrain = new createjs.Container();
-  world.living = new createjs.Container();
-  world.object = new createjs.Container();
 
-  world.addChild(world.ground);
-  world.addChild(world.terrain);
-  world.addChild(world.living);
-  world.addChild(world.object);
+  // layers are rendered to the canvas in order, walker layer is used for path finding and moving entities and is not cached.
+  var layerTypes = ['ground', 'terrain', 'walker', 'object'];
+
+  layerTypes.map(function (ln) {
+    world[ln] = new createjs.Container();
+    world.addChild(world[ln]);
+  });
 
   world.snapToPixel = true;
   stage.addChild(world);
@@ -67,7 +66,7 @@ function worldWrap(mapG, stage) {
 
   world.ground.addChild(plate);
 
- ['ground', 'terrain', 'living', 'object'].map(function (layer) {
+  layerTypes.map(function (layer) {
     if (!mapG.layerObj[layer]) return;
     var lyr = mapG.layerObj[layer].mapGrid;
     lyr.map(function (row, tileY) {
@@ -81,27 +80,12 @@ function worldWrap(mapG, stage) {
         tile.y = tileY * self.tileY;
       });
     });
-    setTimeout(function () {
-      world[layer].cache(0, 0, self.maxX, self.maxY);
-    }, 500);
+    // wait 500ms and cache the layer for all the speeds
+    if (layer != 'walker')
+      setTimeout(function () {
+        world[layer].cache(0, 0, self.maxX, self.maxY);
+      }, 500);
   });
-
-  //  // render the tiles onto the world container
-  //  //  mapG.layers[0].mapGrid.map(function (row, tileY) {
-  //  //    row.map(function (col, tileX) {
-  //  //      //      console.log(col, tileX, tileY);
-  //  //      var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col - 1);
-  //  //      tile.paused = true;
-  //  //      world.layer1.addChild(tile);
-  //  //      tile.name = 'map_' + tileX + '_' + tileY;
-  //  //      tile.x = tileX * self.tileX;
-  //  //      tile.y = tileY * self.tileY;
-  //  //    });
-  //  //  });
-  //  // wait 500ms and cache the layer
-  //  setTimeout(function () {
-  //    world.layer1.cache(0, 0, self.maxX, self.maxY);
-  //  }, 500);
 
 }
 
