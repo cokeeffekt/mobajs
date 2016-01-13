@@ -76,9 +76,12 @@ function buildMap(path) {
       mapFile = _.assign(mapFile, d);
 
       // build out the map grid from the tiled file
+      mapFile.layerObj = {};
       _.forEach(mapFile.layers, function (layer) {
         layer.mapGrid = _.chunk(b642array(layer.data), layer.width);
+        mapFile.layerObj[layer.name] = layer;
       });
+      mapFile.layers = undefined;
 
       // build out the sprite sheet for each tileset
       _.forEach(mapFile.tilesets, function (set) {

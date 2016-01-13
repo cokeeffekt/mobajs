@@ -12,10 +12,15 @@ function worldWrap(mapG, stage) {
   this.maxX = mapG.width * this.tileX;
   this.maxY = mapG.height * this.tileY;
 
-  world.layer1 = new createjs.Container();
-  world.layer2 = new createjs.Container();
-  world.addChild(world.layer1);
-  world.addChild(world.layer2);
+  world.ground = new createjs.Container();
+  world.terrain = new createjs.Container();
+  world.living = new createjs.Container();
+  world.object = new createjs.Container();
+
+  world.addChild(world.ground);
+  world.addChild(world.terrain);
+  world.addChild(world.living);
+  world.addChild(world.object);
 
   world.snapToPixel = true;
   stage.addChild(world);
@@ -60,25 +65,43 @@ function worldWrap(mapG, stage) {
     alpha: 0.5
   });
 
-  world.layer1.addChild(plate);
+  world.ground.addChild(plate);
 
-
-  // render the tiles onto the world container
-  mapG.layers[0].mapGrid.map(function (row, tileY) {
-    row.map(function (col, tileX) {
-      //      console.log(col, tileX, tileY);
-      var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col - 1);
-      tile.paused = true;
-      world.layer1.addChild(tile);
-      tile.name = 'map_' + tileX + '_' + tileY;
-      tile.x = tileX * self.tileX;
-      tile.y = tileY * self.tileY;
+ ['ground', 'terrain', 'living', 'object'].map(function (layer) {
+    if (!mapG.layerObj[layer]) return;
+    var lyr = mapG.layerObj[layer].mapGrid;
+    lyr.map(function (row, tileY) {
+      row.map(function (col, tileX) {
+        //      console.log(col, tileX, tileY);
+        var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col - 1);
+        tile.paused = true;
+        world[layer].addChild(tile);
+        tile.name = layer + '_' + tileX + '_' + tileY;
+        tile.x = tileX * self.tileX;
+        tile.y = tileY * self.tileY;
+      });
     });
+    setTimeout(function () {
+      world[layer].cache(0, 0, self.maxX, self.maxY);
+    }, 500);
   });
-  // wait 500ms and cache the layer
-  setTimeout(function () {
-    world.layer1.cache(0, 0, self.maxX, self.maxY);
-  }, 500);
+
+  //  // render the tiles onto the world container
+  //  //  mapG.layers[0].mapGrid.map(function (row, tileY) {
+  //  //    row.map(function (col, tileX) {
+  //  //      //      console.log(col, tileX, tileY);
+  //  //      var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col - 1);
+  //  //      tile.paused = true;
+  //  //      world.layer1.addChild(tile);
+  //  //      tile.name = 'map_' + tileX + '_' + tileY;
+  //  //      tile.x = tileX * self.tileX;
+  //  //      tile.y = tileY * self.tileY;
+  //  //    });
+  //  //  });
+  //  // wait 500ms and cache the layer
+  //  setTimeout(function () {
+  //    world.layer1.cache(0, 0, self.maxX, self.maxY);
+  //  }, 500);
 
 }
 
