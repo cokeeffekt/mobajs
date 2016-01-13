@@ -1,6 +1,6 @@
 /* ------------
 
-Imports the map and calls a ready function.
+Imports the map and calls a ready function. fn(map, heroes)
 
 ------------ */
 
@@ -19,7 +19,10 @@ var finishedLoad = false;
 
 
 function doneLoad() {
-  console.log(mapFile);
+  console.log('Trigger Ready');
+  _.forEach(ready, function (fn) {
+    fn(mapFile, heroes);
+  });
 }
 
 function hasLoadMap() {
@@ -98,9 +101,9 @@ function buildMap(path) {
 
     // hero sprite sheet preload and build spritesheet
     _.forEach(mapIndex.heroes, function (hero) {
-      heroes[hero.slug] = d;
+      heroes[hero.slug] = hero;
       preloadImg(path + '/' + _.trimLeft(hero.sprite, '/'));
-      heroes.spriteSheet = new createjs.SpriteSheet({
+      hero.spriteSheet = new createjs.SpriteSheet({
         images: [path + '/' + _.trimLeft(hero.sprite, '/')],
         frames: {
           width: 64,

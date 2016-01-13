@@ -1,14 +1,16 @@
 var players = require('src/player');
 
-function worldWrap(mapG, tileTypes, stage) {
+function worldWrap(mapG, stage) {
   var self = this;
   var world = new createjs.Container();
   this.stage = stage;
   this.world = world;
   this.players = [];
 
-  this.tileX = 32;
-  this.tileY = 32;
+  this.tileX = mapG.tilewidth;
+  this.tileY = mapG.tileheight;
+  this.maxX = mapG.width * this.tileX;
+  this.maxY = mapG.height * this.tileY;
 
   world.layer1 = new createjs.Container();
   world.layer2 = new createjs.Container();
@@ -30,7 +32,7 @@ function worldWrap(mapG, tileTypes, stage) {
       console.log(offset);
       console.log(evt.target.name);
 
-      players.goto(offset.x - (self.tileX / 2), offset.y - (self.tileY / 2));
+      //      players.goto(offset.x - (self.tileX / 2), offset.y - (self.tileY / 2));
     }, null, true);
   });
 
@@ -39,35 +41,18 @@ function worldWrap(mapG, tileTypes, stage) {
     self.setView((evt.stageX - offset.x) + (stage.canvas.width / 2), (evt.stageY - offset.y) + (stage.canvas.height / 2));
   });
 
+  console.log(mapG);
 
-  mapG[0][0] = 0;
-  mapG[0][1] = 0;
-  mapG[1][1] = 0;
 
   // path finding define walkable
 
-  this.easystar = new EasyStar.js();
-  this.easystar.setGrid(mapG);
-  this.easystar.setAcceptableTiles([0]);
-  this.easystar.enableDiagonals();
+  //  this.easystar = new EasyStar.js();
+  //  this.easystar.setGrid(mapG);
+  //  this.easystar.setAcceptableTiles([0]);
+  //  this.easystar.enableDiagonals();
 
-  var mapC = [];
 
-  this.maxX = (mapG[0].length) * this.tileY;
-  this.maxY = (mapG.length) * this.tileX;
-
-  mapG.map(function (row, rowI) {
-    row.map(function (col, colI) {
-      mapC.push({
-        x: colI,
-        y: rowI,
-        cX: colI * self.tileX,
-        cY: rowI * self.tileY,
-        tile: tileTypes[col].clone()
-      });
-    });
-  });
-  //
+  // build a big ass purple plate for our world container
   var plate = new createjs.Shape();
   plate.graphics.beginFill('Purple').drawRect(0, 0, this.maxX + this.tileX, this.maxY + this.tileY);
 
@@ -78,13 +63,22 @@ function worldWrap(mapG, tileTypes, stage) {
   world.layer1.addChild(plate);
 
 
-  mapC.map(function (tile) {
-    world.layer1.addChild(tile.tile);
-    tile.tile.name = 'map_' + tile.x + '_' + tile.y;
-    tile.tile.x = tile.cX;
-    tile.tile.y = tile.cY;
+  // render the tiles onto the world container
+  mapG.layers[0].mapGrid.map(function (row, tileY) {
+    row.map(function (col, tileX) {
+      //      console.log(col, tileX, tileY);
+      var tile = new createjs.Sprite(mapG.tilesets[0].spriteSheet, col);
+      tile.paused = true;
+      //      console.log(tile, col);
+      //      ehe.rwre.wer.wer = 12;
+      world.layer1.addChild(tile);
+      tile.name = 'map_' + tileX + '_' + tileY;
+      tile.x = tileX * self.tileX;
+      tile.y = tileY * self.tileY;
+    });
   });
-  world.layer1.cache(0, 0, this.maxX, this.maxY);
+
+  //  world.layer1.cache(0, 0, this.maxX, this.maxY);
 
 }
 
