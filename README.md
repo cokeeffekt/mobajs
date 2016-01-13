@@ -10,6 +10,8 @@ https://github.com/gaurav0/Universal-LPC-Spritesheet-Character-Generator
 
 http://www.mapeditor.org/
 
+http://www.gamefromscratch.com/post/2015/10/14/Tiled-Map-Editor-Tutorial-Series.aspx
+
 Canvas
 
 world(container)

@@ -75,8 +75,10 @@ function worldWrap(mapG, stage) {
       tile.y = tileY * self.tileY;
     });
   });
-
-  //  world.layer1.cache(0, 0, this.maxX, this.maxY);
+  // wait 500ms and cache the layer
+  setTimeout(function () {
+    world.layer1.cache(0, 0, self.maxX, self.maxY);
+  }, 500);
 
 }
 
@@ -104,7 +106,7 @@ worldWrap.prototype.setView = function (x, y) {
   var world = this.world;
   var stage = this.stage;
 
-  console.log(x, y);
+  //  console.log(x, y);
   x -= (stage.canvas.width / 2);
   y -= (stage.canvas.height / 2);
 
