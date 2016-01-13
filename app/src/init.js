@@ -33,27 +33,34 @@ var tileTypes = {
 };
 
 var world = require('src/world');
+var map = require('src/map');
 
-$(function () {
-  //set world stage
-  var $fps = $('#fps');
-  var stage = new createjs.Stage('world');
-
-  var $world = new world(mapG, tileTypes, stage);
-
-  var playerObj = {
-    image: '/images/character.png',
-  };
-
-  $world.addPlayer(playerObj, 10, 10);
-
-  function handleTick(event) {
-    $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
-    $world.onTick(event);
-    stage.update(event);
-  }
-
-  createjs.Ticker.setFPS(30);
-  createjs.Ticker.addEventListener('tick', handleTick);
-
+map.ready(function () {
+  console.log('Map Ready');
 });
+
+map.build('/maps/enfos/');
+
+//$(function () {
+//  //set world stage
+//  var $fps = $('#fps');
+//  var stage = new createjs.Stage('world');
+//
+//  var $world = new world(mapG, tileTypes, stage);
+//
+//  var playerObj = {
+//    image: '/images/character.png',
+//  };
+//
+//  $world.addPlayer(playerObj, 10, 10);
+//
+//  function handleTick(event) {
+//    $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
+//    $world.onTick(event);
+//    stage.update(event);
+//  }
+//
+//  createjs.Ticker.setFPS(30);
+//  createjs.Ticker.addEventListener('tick', handleTick);
+//
+//});

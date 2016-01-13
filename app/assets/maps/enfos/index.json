@@ -1,0 +1,10 @@
+{
+  "title": "Enfo's Co-op Survival",
+  "mapFile": "map.json",
+  "heroes": [{
+    "title": "Naked Man",
+    "slug": "naked-name",
+    "sprite": "naked.png"
+  }],
+  "npcs": []
+}
