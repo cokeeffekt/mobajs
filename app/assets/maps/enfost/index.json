@@ -7,8 +7,10 @@
     "sprite": "naked.png"
   }],
   "npcs": [{
-    "title": "Bug Monster",
-    "slug": "bug",
-    "sprite": "bug.png"
+    "title": "White Dragon",
+    "slug": "white-dragon",
+    "sprite": "mobs/white-dragon.png",
+    "width": 48,
+    "height": 48
   }]
 }

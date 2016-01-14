@@ -1,45 +1,45 @@
-var players = [];
+var npcs = [];
 
-function player(obj, tileX, tileY, world, stage) {
+function npc(obj, tileX, tileY, world, stage) {
+  console.log(obj);
 
   // container for player
   var self = this;
   this.world = world;
   this.stage = stage;
-  this.focusPlayer = true;
   this.currentDirection = 'down';
   this.walkingPath = [];
   this.walking = false;
   this.directionPref = 'y';
 
-  this.plCont = new createjs.Container();
+  this.npCont = new createjs.Container();
 
   var plate = new createjs.Shape();
-  plate.graphics.beginFill('Green').drawRoundRect(0, (world.tileHeight / 2) + (world.tileHeight / 8), world.tileWidth, world.tileHeight / 2, 10);
+  plate.graphics.beginFill('Red').drawRoundRect(0, (world.tileHeight / 2) + (world.tileHeight / 8), world.tileWidth, world.tileHeight / 2, 10);
   plate.set({
     alpha: 0.3
   });
 
-  this.plCont.addChild(plate);
+  this.npCont.addChild(plate);
 
+  world.world.collisions.addChild(this.npCont);
 
-  world.world.collisions.addChild(this.plCont);
-  world.world.collisions.addChild(this.plCont);
-
-  this.plCont.x = tileX * world.tileWidth;
-  this.plCont.y = tileY * world.tileHeight;
+  this.npCont.x = tileX * world.tileWidth;
+  this.npCont.y = tileY * world.tileHeight;
 
   this.sprite = new createjs.Sprite(obj.spriteSheet, 'stand_down');
-  this.sprite.gotoAndStop('stand_down');
-  this.sprite.x = -16;
-  this.sprite.y = -32;
-  this.plCont.addChild(this.sprite);
-  players.push(this);
+  this.sprite.x = -8;
+  this.sprite.y = -16;
+  this.npCont.addChild(this.sprite);
+  npcs.push(this);
+
+  console.log(this.npCont);
 
   this.setPos(tileX, tileY, 0);
+
 }
 
-player.prototype.setPos = function (tileX, tileY, duration, cb) {
+npc.prototype.setPos = function (tileX, tileY, duration, cb) {
 
   var self = this;
   var direction;
@@ -72,23 +72,7 @@ player.prototype.setPos = function (tileX, tileY, duration, cb) {
   this.sprite.gotoAndPlay('walk_' + this.currentDirection);
   self.walking = true;
   this.world.sortContainer();
-  if (duration === 0) {
-
-    this.plCont.x = tileX * this.world.tileWidth;
-    this.plCont.y = tileY * this.world.tileHeight;
-    if (typeof cb == 'function')
-      cb();
-
-    self.currentX = self.plCont.x;
-    self.currentY = self.plCont.y;
-    self.currentTileX = tileX;
-    self.currentTileY = tileY;
-
-    console.log(this.sprite);
-
-    return;
-  }
-  createjs.Tween.get(this.plCont, {
+  createjs.Tween.get(this.npCont, {
       override: true
     })
     .to({
@@ -99,27 +83,27 @@ player.prototype.setPos = function (tileX, tileY, duration, cb) {
       self.walking = false;
       if (typeof cb == 'function')
         cb();
-      self.currentX = self.plCont.x;
-      self.currentY = self.plCont.y;
+      self.currentX = self.npCont.x;
+      self.currentY = self.npCont.y;
       self.currentTileX = tileX;
       self.currentTileY = tileY;
     });
 };
 
-player.prototype.walkPath = function () {
+npc.prototype.walkPath = function () {
   var self = this;
   if (self.walkingPath.length < 1) {
     self.sprite.gotoAndStop('stand_' + self.currentDirection);
     return console.log('done');
   }
   var toTile = self.walkingPath[0];
-  self.setPos(toTile.x, toTile.y, 500, function () {
+  self.setPos(toTile.x, toTile.y, 1000, function () {
     _.pullAt(self.walkingPath, 0);
     self.walkPath();
   });
 };
 
-player.prototype.walkTo = function (tileX, tileY) {
+npc.prototype.walkTo = function (tileX, tileY) {
   var self = this;
   this.world.walkPath(this.currentTileX, this.currentTileY, tileX, tileY, function (path) {
     _.pullAt(path, 0);
@@ -136,28 +120,11 @@ player.prototype.walkTo = function (tileX, tileY) {
   });
 };
 
-player.prototype.centerView = function () {
-  this.world.setView(this.stage.canvas.width - this.plCont.x, this.stage.canvas.height - this.plCont.y);
-};
-
-function goto(tileX, tileY) {
-  var player = _.find(players, {
-    focusPlayer: true
-  });
-  player.walkTo(tileX, tileY);
-}
-
 function onTick(event) {
-  var player = _.find(players, {
-    focusPlayer: true,
-    walking: true
-  });
-  if (player)
-    player.centerView();
+
 }
 
 module.exports = {
-  new: player,
-  goto: goto,
+  new: npc,
   onTick: onTick
 };

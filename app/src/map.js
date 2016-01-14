@@ -20,9 +20,11 @@ var finishedLoad = false;
 
 function doneLoad() {
   console.log('Trigger Ready');
-  _.forEach(ready, function (fn) {
-    fn(mapFile, heroes);
-  });
+  setTimeout(function () {
+    _.forEach(ready, function (fn) {
+      fn(mapFile, heroes, npcs);
+    });
+  }, 3000);
 }
 
 function hasLoadMap() {
@@ -32,6 +34,8 @@ function hasLoadMap() {
     return console.log('Waiting for mapFile');
   if (_.isEmpty(heroes))
     return console.log('Waiting for heroes');
+  if (_.isEmpty(npcs))
+    return console.log('Waiting for npcs');
   if (assetsLoad.length < assetsDone.length)
     return console.log('Waiting for assets');
   if (!finishedLoad) {
@@ -87,7 +91,6 @@ function buildMap(path) {
       // build out the sprite sheet for each tileset
       _.forEach(mapFile.tilesets, function (set) {
         preloadImg(path + '/' + _.trimLeft(set.image, '/'));
-        console.log(set);
         set.spriteSheet = new createjs.SpriteSheet({
           images: [path + '/' + _.trimLeft(set.image, '/')],
           frames: {
@@ -104,6 +107,9 @@ function buildMap(path) {
     }, 'json');
 
     // hero sprite sheet preload and build spritesheet
+    // this is hardcoded to work from LPC generated files.
+    // https://github.com/gaurav0/Universal-LPC-Spritesheet-Character-Generator
+
     _.forEach(mapIndex.heroes, function (hero) {
       heroes[hero.slug] = hero;
       preloadImg(path + '/' + _.trimLeft(hero.sprite, '/'));
@@ -129,10 +135,10 @@ function buildMap(path) {
           thrust_down: [6 * 13, (6 * 13) + 7],
           thrust_right: [7 * 13, (7 * 13) + 7],
 
-          walk_up: [8 * 13, (8 * 13) + 8, 8 * 13],
-          walk_left: [9 * 13, (9 * 13) + 8, 9 * 13],
-          walk_down: [10 * 13, (10 * 13) + 8, 10 * 13],
-          walk_right: [11 * 13, (11 * 13) + 8, 11 * 13],
+          walk_up: [8 * 13, (8 * 13) + 8, (8 * 13) + 1],
+          walk_left: [9 * 13, (9 * 13) + 8, (9 * 13) + 1],
+          walk_down: [10 * 13, (10 * 13) + 8, (10 * 13) + 1],
+          walk_right: [11 * 13, (11 * 13) + 8, (11 * 13) + 1],
 
           slash_up: [12 * 13, (12 * 13) + 5],
           slash_left: [13 * 13, (13 * 13) + 5],
@@ -149,8 +155,39 @@ function buildMap(path) {
         framerate: 10
       });
     });
+
+
+    _.forEach(mapIndex.npcs, function (npc) {
+      npcs[npc.slug] = npc;
+      preloadImg(path + '/' + _.trimLeft(npc.sprite, '/'));
+
+      npc.spriteSheet = new createjs.SpriteSheet({
+        images: [path + '/' + _.trimLeft(npc.sprite, '/')],
+        frames: {
+          width: npc.width,
+          height: npc.width
+        },
+        animations: {
+          stand_down: 1,
+          stand_left: 4,
+          stand_right: 7,
+          stand_up: 10,
+
+          walk_down: [0, 2],
+          walk_left: [3, 5],
+          walk_right: [6, 8],
+          walk_up: [9, 11]
+        },
+        framerate: 10
+      });
+    });
+
+    console.log(npcs);
+
     hasLoadMap();
   }, 'json');
+
+
 
 }
 

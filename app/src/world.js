@@ -1,4 +1,5 @@
 var players = require('src/player');
+var npcs = require('src/npc');
 var easystar = new EasyStar.js();
 
 function worldWrap(mapG, stage) {
@@ -15,7 +16,7 @@ function worldWrap(mapG, stage) {
 
 
   // layers are rendered to the canvas in order, collisions layer is used for path finding and moving entities and is not cached.
-  var layerTypes = ['ground', 'terrain', 'collisions', 'object'];
+  var layerTypes = ['ground', 'terrain', 'object_below', 'collisions', 'object_above'];
 
   layerTypes.map(function (ln) {
     world[ln] = new createjs.Container();
@@ -28,16 +29,18 @@ function worldWrap(mapG, stage) {
   // for caching world offset
   var offset = new createjs.Point();
 
+  var dragCatch = 0;
   var worldUpEvent = false;
   world.on('mousedown', function (evt) {
     offset.x = evt.stageX - world.x;
     offset.y = evt.stageY - world.y;
 
     worldUpEvent = world.on('pressup', function (evt) {
+      dragCatch = 0;
       console.log('clicked at', offset);
-
       if (evt.target.name) {
         var tileData = evt.target.name.split('_');
+        console.log(tileData);
         players.goto(parseInt(tileData[1]), parseInt(tileData[2]));
       }
     }, null, true);
@@ -48,8 +51,14 @@ function worldWrap(mapG, stage) {
   });
 
   world.on('pressmove', function (evt) {
-    world.off('pressup', worldUpEvent);
-    self.setView((evt.stageX - offset.x) + (stage.canvas.width / 2), (evt.stageY - offset.y) + (stage.canvas.height / 2));
+    dragCatch++;
+
+    console.log('moved');
+    if (dragCatch > 2) {
+      world.off('pressup', worldUpEvent);
+      self.setView((evt.stageX - offset.x) + (stage.canvas.width / 2), (evt.stageY - offset.y) + (stage.canvas.height / 2));
+    }
+
   });
 
 
@@ -97,6 +106,7 @@ function worldWrap(mapG, stage) {
 
 worldWrap.prototype.onTick = function (event) {
   players.onTick(event);
+  npcs.onTick(event);
 };
 
 worldWrap.prototype.centerView = function (x, y) {
@@ -141,11 +151,28 @@ worldWrap.prototype.moveTo = function (x, y, duration) {
 
 };
 
+worldWrap.prototype.sortContainer = function () {
+  this.world.collisions.sortChildren(function (obj1, obj2, options) {
+    if (obj1.y > obj2.y)
+      return 1;
+    if (obj1.y < obj2.y)
+      return -1;
+    return 0;
+  });
+};
+
 worldWrap.prototype.addPlayer = function (playerObject, tileX, tileY) {
   var world = this.world;
   var stage = this.stage;
   var plobj = new players.new(playerObject, tileX, tileY, this, stage);
   return plobj;
+};
+
+worldWrap.prototype.addNpc = function (npcObject, tileX, tileY) {
+  var world = this.world;
+  var stage = this.stage;
+  var npobj = new npcs.new(npcObject, tileX, tileY, this, stage);
+  return npobj;
 };
 
 worldWrap.prototype.walkPath = function (startX, startY, endX, endY, cb) {

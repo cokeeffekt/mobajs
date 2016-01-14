@@ -2,7 +2,7 @@ var world = require('src/world');
 var map = require('src/map');
 
 $(function () {
-  map.ready(function (mapObj, heroObj) {
+  map.ready(function (mapObj, heroObj, npcObj) {
     console.log('Map Ready');
     $('#loader').hide();
 
@@ -13,6 +13,8 @@ $(function () {
 
     console.log(heroObj);
 
+
+
     function handleTick(event) {
       $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
       $world.onTick(event);
@@ -22,9 +24,24 @@ $(function () {
     createjs.Ticker.setFPS(30);
     createjs.Ticker.addEventListener('tick', handleTick);
 
-    $world.addPlayer(heroObj['naked-man'], 5, 5);
+
+    $world.addPlayer(heroObj['naked-man'], 18, 47);
+
+    // wave 1 test
+
+    var count = 1;
+    while (count < 20) {
+      count++;
+      setTimeout(function () {
+        var firstnpc = $world.addNpc(npcObj['white-dragon'], 4, 3);
+        setTimeout(function () {
+          firstnpc.walkTo(18, 47);
+        }, 500);
+      }, 3000 * count);
+    }
+
 
   });
 
-  map.build('/maps/enfos/');
+  map.build('/maps/enfost/');
 });
