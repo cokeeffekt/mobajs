@@ -1,4 +1,5 @@
 var players = require('src/player');
+var easystar = new EasyStar.js();
 
 function worldWrap(mapG, stage) {
   var self = this;
@@ -7,14 +8,14 @@ function worldWrap(mapG, stage) {
   this.world = world;
   this.players = [];
 
-  this.tileX = mapG.tilewidth;
-  this.tileY = mapG.tileheight;
-  this.maxX = mapG.width * this.tileX;
-  this.maxY = mapG.height * this.tileY;
+  this.tileWidth = mapG.tilewidth;
+  this.tileHeight = mapG.tileheight;
+  this.maxX = mapG.width * this.tileWidth;
+  this.maxY = mapG.height * this.tileHeight;
 
 
-  // layers are rendered to the canvas in order, walker layer is used for path finding and moving entities and is not cached.
-  var layerTypes = ['ground', 'terrain', 'walker', 'object'];
+  // layers are rendered to the canvas in order, collisions layer is used for path finding and moving entities and is not cached.
+  var layerTypes = ['ground', 'terrain', 'collisions', 'object'];
 
   layerTypes.map(function (ln) {
     world[ln] = new createjs.Container();
@@ -33,11 +34,17 @@ function worldWrap(mapG, stage) {
     offset.y = evt.stageY - world.y;
 
     worldUpEvent = world.on('pressup', function (evt) {
-      console.log(offset);
-      console.log(evt.target.name);
+      console.log('clicked at', offset);
 
-      //      players.goto(offset.x - (self.tileX / 2), offset.y - (self.tileY / 2));
+      if (evt.target.name) {
+        var tileData = evt.target.name.split('_');
+        players.goto(parseInt(tileData[1]), parseInt(tileData[2]));
+      }
     }, null, true);
+  });
+
+  world.on('dblclick', function (evt) {
+    console.log(evt);
   });
 
   world.on('pressmove', function (evt) {
@@ -45,20 +52,16 @@ function worldWrap(mapG, stage) {
     self.setView((evt.stageX - offset.x) + (stage.canvas.width / 2), (evt.stageY - offset.y) + (stage.canvas.height / 2));
   });
 
-  console.log(mapG);
-
 
   // path finding define walkable
-
-  //  this.easystar = new EasyStar.js();
-  //  this.easystar.setGrid(mapG);
-  //  this.easystar.setAcceptableTiles([0]);
-  //  this.easystar.enableDiagonals();
+  easystar.setGrid(mapG.layerObj.collisions.mapGrid);
+  easystar.setAcceptableTiles([0]);
+  easystar.enableDiagonals();
 
 
   // build a big ass purple plate for our world container
   var plate = new createjs.Shape();
-  plate.graphics.beginFill('Purple').drawRect(0, 0, this.maxX + this.tileX, this.maxY + this.tileY);
+  plate.graphics.beginFill('Purple').drawRect(0, 0, this.maxX + this.tileWidth, this.maxY + this.tileHeight);
 
   plate.set({
     alpha: 0.5
@@ -76,12 +79,15 @@ function worldWrap(mapG, stage) {
         tile.paused = true;
         world[layer].addChild(tile);
         tile.name = layer + '_' + tileX + '_' + tileY;
-        tile.x = tileX * self.tileX;
-        tile.y = tileY * self.tileY;
+        tile.x = tileX * self.tileWidth;
+        tile.y = tileY * self.tileHeight;
+        if (layer == 'collisions')
+        // tile.alpha = 0.5;
+          tile.visible = false;
       });
     });
     // wait 500ms and cache the layer for all the speeds
-    if (layer != 'walker')
+    if (layer != 'collisions')
       setTimeout(function () {
         world[layer].cache(0, 0, self.maxX, self.maxY);
       }, 500);
@@ -90,7 +96,7 @@ function worldWrap(mapG, stage) {
 }
 
 worldWrap.prototype.onTick = function (event) {
-
+  players.onTick(event);
 };
 
 worldWrap.prototype.centerView = function (x, y) {
@@ -110,6 +116,7 @@ worldWrap.prototype.centerView = function (x, y) {
 };
 
 worldWrap.prototype.setView = function (x, y) {
+
   var world = this.world;
   var stage = this.stage;
 
@@ -127,29 +134,26 @@ worldWrap.prototype.setView = function (x, y) {
   world.y = y;
 
   world.centerX = x + (stage.canvas.width / 2);
-  world.centerY = x + (stage.canvas.height / 2);
+  world.centerY = y + (stage.canvas.height / 2);
 };
 
 worldWrap.prototype.moveTo = function (x, y, duration) {
 
 };
 
-worldWrap.prototype.addPlayer = function (playerObject, x, y) {
+worldWrap.prototype.addPlayer = function (playerObject, tileX, tileY) {
   var world = this.world;
   var stage = this.stage;
-  var plobj = new players.new(playerObject, x, y, this, stage);
+  var plobj = new players.new(playerObject, tileX, tileY, this, stage);
+  return plobj;
 };
 
-worldWrap.prototype.walkPath = function (from, to, cb) {
+worldWrap.prototype.walkPath = function (startX, startY, endX, endY, cb) {
   var self = this;
-  this.easystar.findPath(from[0], from[1], to[0], to[1], function (path) {
+  easystar.findPath(startX, startY, endX, endY, function (path) {
     if (path === null) {
       console.log('Path was not found.');
     } else {
-      path.map(function (t) {
-        t.x = t.x * self.tileX;
-        t.y = t.y * self.tileY;
-      });
       if (typeof cb == 'function')
         cb(path);
     }

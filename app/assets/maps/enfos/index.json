@@ -3,7 +3,7 @@
   "mapFile": "map.json",
   "heroes": [{
     "title": "Naked Man",
-    "slug": "naked-name",
+    "slug": "naked-man",
     "sprite": "naked.png"
   }],
   "npcs": []

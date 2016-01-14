@@ -11,6 +11,10 @@
         "Users/patrik.hartwig/Gits/pat/mobajs/bower_components/jquery/src/core/ready",
         "/Users/patrik.hartwig/Gits/pat/mobajs/app/src/map.js",
         "/Users/patrik.hartwig/Gits/pat/mobajs/bower_components/jquery/src/data/var/acceptData.js",
-        "/Users/patrik.hartwig/Gits/pat/mobajs/bower_components/jquery/src/deferred.js"
+        "/Users/patrik.hartwig/Gits/pat/mobajs/bower_components/jquery/src/deferred.js",
+        "Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/setGlobalEval",
+        "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/buildFragment.js",
+        "/Users/patrikhartwig/Gits/mobajs/app/src/world.js",
+        "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/support.js"
     ]
 }

@@ -11,6 +11,8 @@ $(function () {
 
     var $world = new world(mapObj, stage);
 
+    console.log(heroObj);
+
     function handleTick(event) {
       $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
       $world.onTick(event);
@@ -19,6 +21,8 @@ $(function () {
 
     createjs.Ticker.setFPS(30);
     createjs.Ticker.addEventListener('tick', handleTick);
+
+    $world.addPlayer(heroObj['naked-man'], 5, 5);
 
   });
 

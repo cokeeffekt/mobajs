@@ -114,39 +114,39 @@ function buildMap(path) {
           height: 64
         },
         animations: {
-          standup: 0 * 13,
-          standleft: 1 * 13,
-          standdown: 2 * 13,
-          standright: 3 * 13,
+          stand_up: 0 * 13,
+          stand_left: 1 * 13,
+          stand_down: 2 * 13,
+          stand_right: 3 * 13,
 
-          castup: [0 * 13, (0 * 13) + 6, 'standup'],
-          castleft: [1 * 13, (1 * 13) + 6, 'standleft'],
-          castdown: [2 * 13, (2 * 13) + 6, 'standdown'],
-          castright: [3 * 13, (3 * 13) + 6, 'standright'],
+          cast_up: [0 * 13, (0 * 13) + 6],
+          cast_left: [1 * 13, (1 * 13) + 6],
+          cast_down: [2 * 13, (2 * 13) + 6],
+          cast_right: [3 * 13, (3 * 13) + 6],
 
-          thrustup: [4 * 13, (4 * 13) + 7, 'standup'],
-          thrustleft: [5 * 13, (5 * 13) + 7, 'standleft'],
-          thrustdown: [6 * 13, (6 * 13) + 7, 'standdown'],
-          thrustright: [7 * 13, (7 * 13) + 7, 'standright'],
+          thrust_up: [4 * 13, (4 * 13) + 7],
+          thrust_left: [5 * 13, (5 * 13) + 7],
+          thrust_down: [6 * 13, (6 * 13) + 7],
+          thrust_right: [7 * 13, (7 * 13) + 7],
 
-          walkup: [8 * 13, (8 * 13) + 8, 'standup'],
-          walkleft: [9 * 13, (9 * 13) + 8, 'standleft'],
-          walkdown: [10 * 13, (10 * 13) + 8, 'standdown'],
-          walkright: [11 * 13, (11 * 13) + 8, 'standright'],
+          walk_up: [8 * 13, (8 * 13) + 8, 8 * 13],
+          walk_left: [9 * 13, (9 * 13) + 8, 9 * 13],
+          walk_down: [10 * 13, (10 * 13) + 8, 10 * 13],
+          walk_right: [11 * 13, (11 * 13) + 8, 11 * 13],
 
-          slashup: [12 * 13, (12 * 13) + 5, 'standup'],
-          slashleft: [13 * 13, (13 * 13) + 5, 'standleft'],
-          slashdown: [14 * 13, (14 * 13) + 5, 'standdown'],
-          slashright: [15 * 13, (15 * 13) + 5, 'standright'],
+          slash_up: [12 * 13, (12 * 13) + 5],
+          slash_left: [13 * 13, (13 * 13) + 5],
+          slash_down: [14 * 13, (14 * 13) + 5],
+          slash_right: [15 * 13, (15 * 13) + 5],
 
-          bowup: [16 * 13, (16 * 13) + 12, 'standup'],
-          bowleft: [17 * 13, (17 * 13) + 12, 'standleft'],
-          bowdown: [18 * 13, (18 * 13) + 12, 'standdown'],
-          bowright: [19 * 13, (19 * 13) + 12, 'standright'],
+          bow_up: [16 * 13, (16 * 13) + 12],
+          bow_left: [17 * 13, (17 * 13) + 12],
+          bow_down: [18 * 13, (18 * 13) + 12],
+          bow_right: [19 * 13, (19 * 13) + 12],
 
           die: [20 * 13, (20 * 13) + 5]
         },
-        framerate: 30
+        framerate: 10
       });
     });
     hasLoadMap();
