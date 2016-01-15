@@ -38,3 +38,9 @@ Viewport (X,Y)
  - 'object_below' - renders below collision layer
  - 'collisions' - not tiles rendered on this display, any tile on this layer will not be walkable, this layer is where heroes and players exist
  - 'object_above' - renders above collision layer
+ 
+ 
+ http://www.html5rocks.com/en/tutorials/file/dndfiles/
+
+
+<input type="file" name="file_input[]" id="file_input" webkitdirectory="">
