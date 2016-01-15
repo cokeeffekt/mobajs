@@ -9,7 +9,11 @@
   <!--  <script src="/javascripts/tpl.js"></script>-->
   <script src="/javascripts/vendor.js"></script>
   <script>
-    var app = require('src/init');
+    if (window.chrome && window.webkitRTCPeerConnection) {
+      var app = require('src/init');
+    } else {
+      alert('This only works in chrome. Get Chrome.');
+    }
   </script>
 </head>
 
