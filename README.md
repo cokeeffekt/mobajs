@@ -12,6 +12,10 @@ http://www.mapeditor.org/
 
 http://www.gamefromscratch.com/post/2015/10/14/Tiled-Map-Editor-Tutorial-Series.aspx
 
+
+https://github.com/muaz-khan/WebRTC-Experiment/tree/master/DataChannel
+http://stackoverflow.com/questions/4773966/drawing-an-image-from-a-data-url-to-a-canvas
+
 ## mob
 
 http://www.rpgmakervxace.net/topic/2399-grannys-lists-animal-sprites/
