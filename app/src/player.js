@@ -37,6 +37,8 @@ function player(obj, tileX, tileY, world, stage) {
   players.push(this);
 
   this.setPos(tileX, tileY, 0);
+  this.walkTo(tileX, tileY + 1);
+
 }
 
 player.prototype.setPos = function (tileX, tileY, duration, cb) {

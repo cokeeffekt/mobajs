@@ -36,6 +36,7 @@ function npc(obj, tileX, tileY, world, stage) {
   console.log(this.npCont);
 
   this.setPos(tileX, tileY, 0);
+  this.walkTo(tileX, tileY + 1);
 
 }
 

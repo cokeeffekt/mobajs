@@ -25,7 +25,7 @@ $(function () {
     createjs.Ticker.addEventListener('tick', handleTick);
 
 
-    $world.addPlayer(heroObj['naked-man'], 18, 47);
+    $world.addPlayer(heroObj['naked-man'], 18, 46);
 
     // wave 1 test
 
@@ -33,7 +33,7 @@ $(function () {
     while (count < 20) {
       count++;
       setTimeout(function () {
-        var firstnpc = $world.addNpc(npcObj['white-dragon'], 4, 3);
+        var firstnpc = $world.addNpc(npcObj['white-dragon'], 5, 3);
         setTimeout(function () {
           firstnpc.walkTo(18, 47);
         }, 500);
