@@ -36,8 +36,19 @@ pubsub.on('mapdata', function (data, event) {
   map.build(mapData);
 });
 
+var $gameCont;
+
+
+
 map.ready(function (mapObj, heroObj, npcObj) {
   $(document.body).append(require('tpls/game.tpl'));
+
+  $gameCont = $('#container');
+  $gameCanvas = $('<canvas id="world" width="' + window.innerWidth + '" height="' + window.innerHeight + '"></canvas>');
+  $gameCont.append($gameCanvas);
+
+
+
   console.log('Map Ready');
   $('#loader').hide();
 
@@ -72,4 +83,12 @@ map.ready(function (mapObj, heroObj, npcObj) {
   //      }, 500);
   //    }, 3000 * count);
   //  }
+
+  function resize() {
+    stage.canvas.width = window.innerWidth;
+    stage.canvas.height = window.innerHeight;
+    $gameCanvas.attr('width', window.innerWidth);
+    $gameCanvas.attr('height', window.innerHeight);
+  }
+  window.addEventListener('resize', resize, false);
 });
