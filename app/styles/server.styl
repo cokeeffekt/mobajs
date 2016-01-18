@@ -1,0 +1,50 @@
+@import 'nib'
+@import 'rupture'
+@import 'settings'
+
+#server
+  width 800px
+  margin 0 auto
+
+  h1
+    font-size 2rem
+    margin 1rem 0 0.5rem 0
+  h2
+    font-size 1.5rem
+    margin 1rem 0 0.5rem 0
+
+  h3
+    font-size 1.2rem
+    margin 1rem 0 0.5rem
+
+  input[type="file"]
+    position relative
+    width 100%
+    font-size 2rem
+    padding 1rem
+
+  input[type="file"]:after
+    content "Select Folder"
+    color white
+    font-size 2rem
+    background-color blue
+    border-radius 0.2rem
+    border none
+    position absolute
+    text-align center
+    width 100%
+    z-index 1
+    left 0
+    padding 1rem 0
+    top 0
+
+  .console
+    height 500px
+    width 100%
+    overflow scroll
+    background-color darkGrey
+
+    div
+      margin 2px
+      font-family "Lucida Console", Monaco, monospace
+

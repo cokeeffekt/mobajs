@@ -1,47 +1,32 @@
-var world = require('src/world');
-var map = require('src/map');
+require('src/global');
 
 $(function () {
-  map.ready(function (mapObj, heroObj, npcObj) {
-    console.log('Map Ready');
-    $('#loader').hide();
 
-    var $fps = $('#fps');
-    var stage = new createjs.Stage('world');
+  page('/', function () {
+    $(document.body).html(require('tpls/index.tpl'));
+    console.log('Page Load : init');
 
-    var $world = new world(mapObj, stage);
-
-    console.log(heroObj);
-
-
-
-    function handleTick(event) {
-      $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
-      $world.onTick(event);
-      stage.update(event);
-    }
-
-    createjs.Ticker.setFPS(30);
-    createjs.Ticker.addEventListener('tick', handleTick);
-
-
-    $world.addPlayer(heroObj['naked-man'], 18, 46);
-
-    // wave 1 test
-
-    var count = 1;
-    while (count < 20) {
-      count++;
-      setTimeout(function () {
-        var firstnpc = $world.addNpc(npcObj['white-dragon'], 5, 3);
-        setTimeout(function () {
-          firstnpc.walkTo(18, 47);
-        }, 500);
-      }, 3000 * count);
-    }
-
-
+    $(document.body).on('submit', '[data-join-game]', function (e) {
+      e.preventDefault();
+      var pin = $('#connectPin').val();
+      if (pin.length != 4) return false;
+      page.redirect('/game/' + pin);
+    });
   });
 
-  map.build('/maps/enfost/');
+  page('/server', function () {
+    console.log('Page Load : Server');
+    require('src/server/gameServer');
+  });
+
+  page('/game/:pin', function (ctx) {
+    console.log('Page Load : Game ' + ctx.params.pin);
+    localStorage.setItem('_pin', ctx.params.pin);
+    require('src/client/gameClient');
+  });
+
+  page({
+    hashbang: true
+  });
+
 });

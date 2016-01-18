@@ -20,6 +20,9 @@
     "lodash": "~3.10.1",
     "PreloadJS": "~0.6.2",
     "easystarjs": "~0.2.3",
-    "peerjs": "~0.3.14"
+    "peerjs": "~0.3.14",
+    "page": "page.js#~1.6.4",
+    "gridlex": "~2.0.8",
+    "jqc": "cokeeffekt/jqv"
   }
 }

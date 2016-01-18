@@ -1,5 +1,5 @@
-var players = require('src/player');
-var npcs = require('src/npc');
+var players = require('src/client/player');
+var npcs = require('src/client/npc');
 var easystar = new EasyStar.js();
 
 function worldWrap(mapG, stage) {
@@ -66,7 +66,6 @@ function worldWrap(mapG, stage) {
   easystar.setGrid(mapG.layerObj.collisions.mapGrid);
   easystar.setAcceptableTiles([0]);
   easystar.enableDiagonals();
-
 
   // build a big ass purple plate for our world container
   var plate = new createjs.Shape();

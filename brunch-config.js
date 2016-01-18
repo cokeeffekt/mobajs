@@ -21,7 +21,7 @@ exports.config = {
     },
     templates: {
       joinTo: {
-        'javascripts/tpl.js': /^app\/modules\//
+        'javascripts/tpl.js': /^app\/tpls\//
       }
     }
   },
@@ -32,7 +32,7 @@ exports.config = {
   plugins: {
     html2js: {
       options: {
-        base: 'app/modules',
+        base: 'app/tpls/',
         htmlmin: {
           removeComments: true
         }

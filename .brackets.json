@@ -16,6 +16,9 @@
         "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/buildFragment.js",
         "/Users/patrikhartwig/Gits/mobajs/app/src/world.js",
         "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/support.js",
-        "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/var/nodeNames.js"
+        "/Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/var/nodeNames.js",
+        "/Users/patrikhartwig/Gits/mobajs/app/src/client/gameClient.js",
+        "Users/patrikhartwig/Gits/mobajs/bower_components/jquery/src/manipulation/var/nodeNames",
+        "/Users/patrikhartwig/Gits/mobajs/app/src/server/gameServer.js"
     ]
 }

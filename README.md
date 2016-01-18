@@ -20,6 +20,9 @@ http://stackoverflow.com/questions/4773966/drawing-an-image-from-a-data-url-to-a
 ngp8uf0sfackgldi
 ```
 
+may need this
+https://github.com/turuslan/HackTimer
+
 ## mob
 
 http://www.rpgmakervxace.net/topic/2399-grannys-lists-animal-sprites/
@@ -40,7 +43,7 @@ Viewport (X,Y)
  - 'object_above' - renders above collision layer
  
  
- http://www.html5rocks.com/en/tutorials/file/dndfiles/
+
 
 
 <input type="file" name="file_input[]" id="file_input" webkitdirectory="">
