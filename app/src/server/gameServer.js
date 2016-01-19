@@ -107,8 +107,19 @@ function server(mapData, pin) {
 
   pubsub.on('fetchmap', function (mapId, event, from) {
     console.log('sending map data to ' + from);
-
     pubsub.chunk('mapdata', localStorage.getItem('_map_data_' + mapId), from);
   });
+
+  pubsub.on('world-loaded', function (mapId, event, from) {
+    console.log(from + ' loaded world ok!');
+    var hero = _.find(heroes, {
+      username: from
+    });
+
+    if (!hero) {
+      pubsub.emit('choose-hero', null, from);
+    }
+  });
+
 
 }

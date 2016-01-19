@@ -36,19 +36,23 @@ pubsub.on('mapdata', function (data, event) {
   map.build(mapData);
 });
 
-var $gameCont;
-
-
-
 map.ready(function (mapObj, heroObj, npcObj) {
   $(document.body).append(require('tpls/game.tpl'));
 
-  $gameCont = $('#container');
-  $gameCanvas = $('<canvas id="world" width="' + window.innerWidth + '" height="' + window.innerHeight + '"></canvas>');
+  var $gameCont = $('#container');
+  var $stats = $gameCont.find('.stats');
+  $stats.fps = $('<span data-value="0">FPS : </span>').appendTo($stats);
+  console.log($stats);
+
+  var $gameCanvas = $('<canvas id="world" width="' + window.innerWidth + '" height="' + window.innerHeight + '"></canvas>');
   $gameCont.append($gameCanvas);
 
   console.log('Map Ready');
   $('#loader').hide();
+
+  // tell server its loaded the world ok
+
+  pubsub.emit('world-loaded');
 
   var $fps = $('#fps');
   var stage = new createjs.Stage('world');
@@ -59,7 +63,7 @@ map.ready(function (mapObj, heroObj, npcObj) {
   console.log(heroObj);
 
   function handleTick(event) {
-    $fps.text('FPS   :   ' + (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
+    $stats.fps.attr('data-value', (createjs.Ticker.getMeasuredFPS()).toFixed(2) || 0);
     $world.onTick(event);
     stage.update(event);
   }
@@ -90,4 +94,12 @@ map.ready(function (mapObj, heroObj, npcObj) {
     $gameCanvas.attr('height', window.innerHeight);
   }
   window.addEventListener('resize', resize, false);
+
+
+  // game related events
+  pubsub.on('choose-hero', function () {
+    console.log('choose hero ploz');
+    console.log(heroObj);
+  });
+
 });

@@ -8,8 +8,6 @@ http://shaneriley.com/demos/canvas/tiled_renderer/
 
 https://github.com/gaurav0/Universal-LPC-Spritesheet-Character-Generator
 
-http://www.mapeditor.org/
-
 http://www.gamefromscratch.com/post/2015/10/14/Tiled-Map-Editor-Tutorial-Series.aspx
 
 
@@ -47,6 +45,54 @@ Viewport (X,Y)
  - 'collisions' - not tiles rendered on this display, any tile on this layer will not be walkable, this layer is where heroes and players exist
  - 'object_above' - renders above collision layer
  
+ 
+## Maps
+
+Maps are a bunch of json files, some images and a javascript file. An index.json file is required.
+
+#### index.json
+
+```
+{
+  // title of the map
+  "title": "Enfo's Co-op Survival",
+  // link to the exported tiled json file.
+  "mapFile": "map.json",
+  "maxPlayers": 8,
+  // defines an array of heros, each with there own properties
+  "heroes": [{
+    "title": "Naked Man",
+    "slug": "naked-man",
+    "sprite": "naked.png"
+  }],
+  // defines an array of npcs
+  "npcs": [{
+    "title": "White Dragon",
+    "slug": "white-dragon",
+    "sprite": "mobs/white-dragon.png",
+    "width": 48,
+    "height": 48
+  }]
+}
+```
+#### Tiled Map Files
+
+Tiled is a map/terrain building tool which can exports maps to json. Download it from http://www.mapeditor.org/
+
+These layers (in order) are required, even if they are blank.
+
+ - 'ground' - ground layer
+ - 'terrain' - terain layer
+ - 'object_below' - renders below collision layer
+ - 'collisions' - not tiles rendered on this display, any tile on this layer will not be walkable, this layer is where heroes and players exist
+ - 'object_above' - renders above collision layer
+
+  
+#### Heroes
+  
+Heroes sprite sheets are hardcoded you can use the following url to generate your own
+
+http://gaurav.munjal.us/Universal-LPC-Spritesheet-Character-Generator/
  
 
 
