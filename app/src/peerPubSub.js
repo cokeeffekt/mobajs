@@ -37,9 +37,13 @@ function host(pin, options) {
     dataCon.on('open', function () {
       runSub('connect', dataCon.metadata.username);
     });
-
   });
 
+  peer.on('error', function () {
+    runSub('error', arguments);
+  });
+
+  // host needs to leave the tab open
   window.onunload = window.onbeforeunload = function (e) {
     if (!!peer && !peer.destroyed) {
       var confirmationMessage = 'This will kill the server that is running.';
@@ -152,7 +156,7 @@ function join(pin, username) {
   });
 
   peer.on('error', function () {
-    runSub('error', null);
+    runSub('error', arguments);
   });
 
   window.onunload = window.onbeforeunload = function (e) {

@@ -37,7 +37,7 @@ $mapLoad.on('maploaded', function (event, mapData) {
   $mapInfo.append('<button data-start-game>Start Game</button>');
 
   $mapInfo.on('click', '[data-start-game]', function () {
-    server(mapData, '1234');
+    server(mapData, '0000');
   });
   $leftBar.html($mapInfo);
 });
@@ -79,11 +79,15 @@ function server(mapData, pin) {
   collisionLayer.grid = _.chunk(b642array(collisionLayer.data), collisionLayer.width);
 
   // start listening for peers
-  var pubsub = new peerPubSub.host('1234', {});
+  var pubsub = new peerPubSub.host(pin, {});
 
   pubsub.on('ready', function () {
     stats.status = 'running';
     $gameLeft.draw();
+  });
+
+  pubsub.on('error', function () {
+    console.log('Server Dead?');
   });
 
   pubsub.on('connect', function (username, event) {
