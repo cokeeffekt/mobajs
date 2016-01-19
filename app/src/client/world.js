@@ -124,6 +124,10 @@ worldWrap.prototype.centerView = function (x, y) {
   world.y = y;
 };
 
+worldWrap.prototype.centerTile = function (tileX, tileY) {
+  this.setView(this.stage.canvas.width - (tileX * this.tileWidth), this.stage.canvas.height - (tileY * this.tileHeight));
+};
+
 worldWrap.prototype.setView = function (x, y) {
 
   var world = this.world;

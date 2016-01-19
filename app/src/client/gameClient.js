@@ -27,12 +27,20 @@ pubsub.on('error', function () {
 });
 
 pubsub.on('gameInfo', function (data) {
-  console.log(data);
-  pubsub.emit('fetchmap', data.mapId);
+  var hasMap = localStorage.getItem('_map_data_' + data.mapId);
+  mapData = JSON.parse(hasMap);
+  if (hasMap) {
+    console.log('Building map from cache');
+    map.build(mapData);
+  } else {
+    console.log('Fetching map from host');
+    pubsub.emit('fetchmap', data.mapId);
+  }
 });
 
 pubsub.on('mapdata', function (data, event) {
   mapData = JSON.parse(data);
+  localStorage.setItem('_map_data_' + mapData.mapId, data);
   map.build(mapData);
 });
 
@@ -59,6 +67,8 @@ map.ready(function (mapObj, heroObj, npcObj) {
   stage.snapToPixelEnabled = true;
 
   var $world = new world(mapObj, stage);
+
+  $world.centerTile(18, 46);
 
   console.log(heroObj);
 
