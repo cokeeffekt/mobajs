@@ -47,8 +47,6 @@ map.ready(function (mapObj, heroObj, npcObj) {
   $gameCanvas = $('<canvas id="world" width="' + window.innerWidth + '" height="' + window.innerHeight + '"></canvas>');
   $gameCont.append($gameCanvas);
 
-
-
   console.log('Map Ready');
   $('#loader').hide();
 
