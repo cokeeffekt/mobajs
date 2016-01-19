@@ -23,6 +23,11 @@ ngp8uf0sfackgldi
 may need this
 https://github.com/turuslan/HackTimer
 
+## spells
+https://mrbubblewand.wordpress.com/download/
+http://www.charas-project.net/forum/index.php?topic=26447.0
+
+
 ## mob
 
 http://www.rpgmakervxace.net/topic/2399-grannys-lists-animal-sprites/
