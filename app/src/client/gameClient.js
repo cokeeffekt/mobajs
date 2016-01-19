@@ -52,6 +52,7 @@ map.ready(function (mapObj, heroObj, npcObj) {
 
   var $fps = $('#fps');
   var stage = new createjs.Stage('world');
+  stage.snapToPixelEnabled = true;
 
   var $world = new world(mapObj, stage);
 
