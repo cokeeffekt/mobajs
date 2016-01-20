@@ -53,7 +53,6 @@ function server(mapData, pin) {
     joinlink: location.origin + '/#!/game/' + pin
   };
 
-  var heroes = [];
   // set up a view for displaying stats
   var $gameLeft = jqv.new(require('tpls/gamestats.tpl'), stats);
   $leftBar.html($gameLeft);
@@ -91,6 +90,11 @@ function server(mapData, pin) {
   });
 
   pubsub.on('connect', function (username, event) {
+
+    if (_.contains(stats.connected, username)) {
+      return pubsub.emit('kick', 'Username already connected');
+    }
+
     stats.connected.push(username);
     console.log('player joined : ' + username);
     $gameLeft.draw();
@@ -114,16 +118,55 @@ function server(mapData, pin) {
     pubsub.chunk('mapdata', localStorage.getItem('_map_data_' + mapId), from);
   });
 
-  pubsub.on('world-loaded', function (mapId, event, from) {
+  pubsub.on('ping', function (n, e, from) {
+    pubsub.emit('pong', 0, from);
+  });
+
+
+  var heroes = [];
+  // world loaded get hero info
+  pubsub.on('world-loaded', function (n, event, from) {
     console.log(from + ' loaded world ok!');
     var hero = _.find(heroes, {
       username: from
     });
-
     if (!hero) {
+      pubsub.emit('choose-hero', null, from);
+    } else {
+      _.forEach(heroes, function (hero) {
+        pubsub.emit('new-hero', hero, from);
+      });
+    }
+  });
+
+  // hero stuff
+  pubsub.on('select-hero', function (slug, event, from) {
+    // check hero slug exists
+    var findHero = _.find(mapInfo.heroes, {
+      slug: slug
+    });
+    if (findHero) {
+      console.log(from + ' has selected a hero : ' + slug);
+      var hero = _.clone(findHero);
+      hero.username = from;
+      heroes.push(hero);
+      pubsub.emit('new-hero', hero);
+    } else {
       pubsub.emit('choose-hero', null, from);
     }
   });
 
+  // hero move
+  pubsub.on('player-move', function (obj, event, from) {
+    var hero = _.find(heroes, {
+      username: from
+    });
+    if (hero) {
+      _.assign(hero, obj);
+      console.log(from + ' has moved to ' + obj.tileX + ',' + obj.tileY);
+      pubsub.emit('player-move:' + from, obj);
+    }
+
+  });
 
 }

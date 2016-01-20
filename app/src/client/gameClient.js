@@ -26,6 +26,11 @@ pubsub.on('error', function () {
   location.href = '/';
 });
 
+pubsub.on('kick', function (msg, event) {
+  alert(msg);
+  location.href = '/';
+});
+
 pubsub.on('gameInfo', function (data) {
   var hasMap = localStorage.getItem('_map_data_' + data.mapId);
   mapData = JSON.parse(hasMap);
@@ -49,7 +54,8 @@ map.ready(function (mapObj, heroObj, npcObj) {
 
   var $gameCont = $('#container');
   var $stats = $gameCont.find('.stats');
-  $stats.fps = $('<span data-value="0">FPS : </span>').appendTo($stats);
+  $stats.fps = $('<span data-value="0">FPS  : </span>').appendTo($stats);
+  $stats.ping = $('<span data-value="0">Ping : </span>').appendTo($stats);
   console.log($stats);
 
   var $gameCanvas = $('<canvas id="world" width="' + window.innerWidth + '" height="' + window.innerHeight + '"></canvas>');
@@ -66,7 +72,7 @@ map.ready(function (mapObj, heroObj, npcObj) {
   var stage = new createjs.Stage('world');
   stage.snapToPixelEnabled = true;
 
-  var $world = new world(mapObj, stage);
+  var $world = new world(mapObj, stage, pubsub);
 
   $world.centerTile(18, 46);
 
@@ -107,9 +113,41 @@ map.ready(function (mapObj, heroObj, npcObj) {
 
 
   // game related events
+
+  // hero selector
+
   pubsub.on('choose-hero', function () {
     console.log('choose hero ploz');
-    console.log(heroObj);
+    var $heroSelect = jqv.new(require('tpls/hero-select.tpl'), {
+      heroes: _.values(heroObj)
+    });
+    $gameCont.append($heroSelect);
+    $heroSelect.on('click', 'button', function () {
+      console.log('selected hero');
+      pubsub.emit('select-hero', $heroSelect.find('#heroSelected').val());
+      $heroSelect.remove();
+    });
   });
 
+  // got hero to insert into world
+  pubsub.on('new-hero', function (hero, event) {
+    console.log('put me in world', hero);
+    if (hero.username == username)
+      hero.owned = true;
+
+    $world.addPlayer(heroObj[hero.slug], hero);
+  });
+
+
+  // ping
+  var last = Date.now();
+  pubsub.on('pong', function () {
+    var latency = Date.now() - last;
+    $stats.ping.attr('data-value', latency + 'ms');
+    setTimeout(function () {
+      last = Date.now();
+      pubsub.emit('ping');
+    }, 1000);
+  });
+  pubsub.emit('ping');
 });

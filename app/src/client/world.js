@@ -2,9 +2,11 @@ var players = require('src/client/player');
 var npcs = require('src/client/npc');
 var easystar = new EasyStar.js();
 
-function worldWrap(mapG, stage) {
+function worldWrap(mapG, stage, pubsub) {
   var self = this;
   var world = new createjs.Container();
+
+  this.pubsub = pubsub;
   this.stage = stage;
   this.world = world;
   this.players = [];
@@ -164,10 +166,10 @@ worldWrap.prototype.sortContainer = function () {
   });
 };
 
-worldWrap.prototype.addPlayer = function (playerObject, tileX, tileY) {
+worldWrap.prototype.addPlayer = function (playerObject, hero) {
   var world = this.world;
   var stage = this.stage;
-  var plobj = new players.new(playerObject, tileX, tileY, this, stage);
+  var plobj = new players.new(playerObject, hero, this, stage, this.pubsub);
   return plobj;
 };
 

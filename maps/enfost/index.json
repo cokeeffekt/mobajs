@@ -2,10 +2,21 @@
   "title": "Enfo's Co-op Survival",
   "mapFile": "map.json",
   "maxPlayers": 8,
+
+  "mapViewStartX": 18,
+  "mapViewStartY": 46,
+
   "heroes": [{
     "title": "Naked Man",
     "slug": "naked-man",
-    "sprite": "naked.png"
+    "sprite": "naked.png",
+    "tileX": 18,
+    "tileY": 46,
+    "stats": {
+      "health": 100,
+      "mana": 100,
+      "speed": 1.0
+    }
   }],
   "npcs": [{
     "title": "White Dragon",

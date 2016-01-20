@@ -1,12 +1,18 @@
 var players = [];
 
-function player(obj, tileX, tileY, world, stage) {
+function player(obj, hero, world, stage, pubsub) {
+
+  var tileX = hero.tileX;
+  var tileY = hero.tileY;
 
   // container for player
   var self = this;
+  this.owner = hero.username;
+  this.hero = hero;
+  this.pubsub = pubsub;
   this.world = world;
   this.stage = stage;
-  this.focusPlayer = true;
+  this.focusPlayer = hero.owned || false;
   this.currentDirection = 'down';
   this.walkingPath = [];
   this.walking = false;
@@ -17,7 +23,7 @@ function player(obj, tileX, tileY, world, stage) {
   var plate = new createjs.Shape();
   plate.graphics.beginFill('Green').drawRoundRect(0, (world.tileHeight / 2) + (world.tileHeight / 8), world.tileWidth, world.tileHeight / 2, 10);
   plate.set({
-    alpha: 0.3
+    alpha: (this.focusPlayer ? 0.3 : 0)
   });
 
   this.plCont.addChild(plate);
@@ -39,9 +45,24 @@ function player(obj, tileX, tileY, world, stage) {
   this.setPos(tileX, tileY, 0);
   this.walkTo(tileX, tileY + 1);
 
+
+  if (!this.hero.owned) {
+    this.pubsub.on('player-move:' + this.hero.username, function (data, event) {
+      self.setPos(data.tileX, data.tileY, data.duration);
+    });
+  }
 }
 
 player.prototype.setPos = function (tileX, tileY, duration, cb) {
+
+  if (this.hero.owned) {
+    this.pubsub.emit('player-move', {
+      tileX: tileX,
+      tileY: tileY,
+      duration: duration
+    });
+  }
+
 
   var self = this;
   var direction;
@@ -101,6 +122,11 @@ player.prototype.setPos = function (tileX, tileY, duration, cb) {
       self.walking = false;
       if (typeof cb == 'function')
         cb();
+      if (self.walkingPath.length < 1) {
+        console.log('set Stand');
+        self.sprite.gotoAndStop('stand_' + self.currentDirection);
+      }
+
       self.currentX = self.plCont.x;
       self.currentY = self.plCont.y;
       self.currentTileX = tileX;
@@ -108,19 +134,20 @@ player.prototype.setPos = function (tileX, tileY, duration, cb) {
     });
 };
 
+// loops the walking path until its done;
 player.prototype.walkPath = function () {
   var self = this;
   if (self.walkingPath.length < 1) {
-    self.sprite.gotoAndStop('stand_' + self.currentDirection);
     return console.log('done');
   }
   var toTile = self.walkingPath[0];
-  self.setPos(toTile.x, toTile.y, 500, function () {
+  self.setPos(toTile.x, toTile.y, (500 / this.hero.stats.speed), function () {
     _.pullAt(self.walkingPath, 0);
     self.walkPath();
   });
 };
 
+// builds a walking path and appends the path to the hero, then starts it
 player.prototype.walkTo = function (tileX, tileY) {
   var self = this;
   this.world.walkPath(this.currentTileX, this.currentTileY, tileX, tileY, function (path) {
