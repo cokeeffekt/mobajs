@@ -25,6 +25,8 @@ https://github.com/turuslan/HackTimer
 https://mrbubblewand.wordpress.com/download/
 http://www.charas-project.net/forum/index.php?topic=26447.0
 
+http://jsfiddle.net/felixmc/f6LdQ/light/
+https://github.com/sebastianderossi/amusement/tree/master/Particles
 
 ## mob
 
